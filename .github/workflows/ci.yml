@@ -1,4 +1,4 @@
-name: Reservation Service CI
+name: Notification Service CI
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 env:
   DOTNET_VERSION: "8.0.x"
-  SOLUTION_PATH: "./ReservationService/ReservationService.sln"
+  SOLUTION_PATH: "./NotificationService/NotificationService.sln"
 
 jobs:
   build-and-analyze:
