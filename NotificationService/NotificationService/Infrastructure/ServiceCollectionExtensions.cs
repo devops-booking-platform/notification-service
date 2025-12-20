@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NotificationService.Common.Events;
 using NotificationService.Configuration;
+using NotificationService.Domain.Mappings;
 using NotificationService.IntegrationEvents.Handlers;
 using NotificationService.Repositories;
 using NotificationService.Repositories.Interfaces;
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<INotificationDisabledService, NotificationDisabledService>();
+        services.AddScoped<INotificationService, Services.NotificationService>();
         services.AddScoped<IIntegrationEventDispatcher, IntegrationEventDispatcher>();
 
         services.AddScoped<IIntegrationEventHandler<UserDeletedIntegrationEvent>, UserDeletedIntegrationEventHandler>();
@@ -24,6 +26,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<UserDeletedIntegrationEvent>>();
 
         services.AddHostedService<IntegrationEventsSubscriber>();
+        services.AddAutoMapper(cfg => cfg.AddProfile<NotificationMappingProfile>());
 
         return services;
     }
