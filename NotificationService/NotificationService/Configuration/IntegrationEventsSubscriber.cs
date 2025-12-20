@@ -59,7 +59,11 @@ public sealed class IntegrationEventsSubscriber : BackgroundService
 
         await _channel.BasicQosAsync(0, prefetchCount: 1, global: false, cancellationToken: stoppingToken);
 
-        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(UserDeletedIntegrationEvent), cancellationToken: stoppingToken);
+        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(HostRatedIntegrationEvent), cancellationToken: stoppingToken);
+        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(AccommodationRatedIntegrationEvent), cancellationToken: stoppingToken);
+        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(ReservationCreatedIntegrationEvent), cancellationToken: stoppingToken);
+        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(ReservationCanceledIntegrationEvent), cancellationToken: stoppingToken);
+        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(ReservationRespondedIntegrationEvent), cancellationToken: stoppingToken);
 
         var consumer = new AsyncEventingBasicConsumer(_channel);
         consumer.ReceivedAsync += OnMessage;

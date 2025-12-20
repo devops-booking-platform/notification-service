@@ -21,9 +21,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<INotificationService, Services.NotificationService>();
         services.AddScoped<IIntegrationEventDispatcher, IntegrationEventDispatcher>();
 
-        services.AddScoped<IIntegrationEventHandler<UserDeletedIntegrationEvent>, UserDeletedIntegrationEventHandler>();
+        services.AddScoped<IIntegrationEventHandler<HostRatedIntegrationEvent>, HostRatedIntegrationIntegrationEventHandler>();
+        services.AddScoped<IIntegrationEventHandler<AccommodationRatedIntegrationEvent>, AccommodationRatedIntegrationIntegrationEventHandler>();
 
-        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<UserDeletedIntegrationEvent>>();
+        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<HostRatedIntegrationEvent>>();
 
         services.AddHostedService<IntegrationEventsSubscriber>();
         services.AddAutoMapper(cfg => cfg.AddProfile<NotificationMappingProfile>());
