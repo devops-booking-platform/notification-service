@@ -21,8 +21,21 @@ public static class ServiceCollectionExtensions
         services.AddScoped<INotificationService, Services.NotificationService>();
         services.AddScoped<IIntegrationEventDispatcher, IntegrationEventDispatcher>();
 
-        services.AddScoped<IIntegrationEventHandler<HostRatedIntegrationEvent>, HostRatedIntegrationIntegrationEventHandler>();
-        services.AddScoped<IIntegrationEventHandler<AccommodationRatedIntegrationEvent>, AccommodationRatedIntegrationIntegrationEventHandler>();
+        services
+            .AddScoped<IIntegrationEventHandler<HostRatedIntegrationEvent>,
+                HostRatedIntegrationIntegrationEventHandler>();
+        services
+            .AddScoped<IIntegrationEventHandler<AccommodationRatedIntegrationEvent>,
+                AccommodationRatedIntegrationIntegrationEventHandler>();
+        services
+            .AddScoped<IIntegrationEventHandler<ReservationCreatedIntegrationEvent>,
+                ReservationCreatedIntegrationEventHandler>();
+        services
+            .AddScoped<IIntegrationEventHandler<ReservationCanceledIntegrationEvent>,
+                ReservationCanceledIntegrationEventHandler>();
+        services
+            .AddScoped<IIntegrationEventHandler<ReservationRespondedIntegrationEvent>,
+                ReservationRespondedIntegrationEventHandlerHandler>();
 
         services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<HostRatedIntegrationEvent>>();
 
