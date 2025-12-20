@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<INotificationDisabledService, NotificationDisabledService>();
         services.AddScoped<IIntegrationEventDispatcher, IntegrationEventDispatcher>();
 
         services.AddScoped<IIntegrationEventHandler<UserDeletedIntegrationEvent>, UserDeletedIntegrationEventHandler>();
