@@ -16,7 +16,6 @@ public sealed class IntegrationEventsSubscriber : BackgroundService
 
     private IConnection? _connection;
     private IChannel? _channel;
-    private CancellationToken _stoppingToken;
 
     public IntegrationEventsSubscriber(
     IOptions<RabbitMqSettings> options,
@@ -30,8 +29,6 @@ public sealed class IntegrationEventsSubscriber : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _stoppingToken = stoppingToken;
-
         var factory = new ConnectionFactory
         {
             HostName = _settings.Host,
@@ -89,7 +86,7 @@ public sealed class IntegrationEventsSubscriber : BackgroundService
             using var scope = _serviceProvider.CreateScope();
             var dispatcher = scope.ServiceProvider.GetRequiredService<IIntegrationEventDispatcher>();
 
-            await dispatcher.Dispatch(ea.RoutingKey, json, _stoppingToken);
+            await dispatcher.Dispatch(ea.RoutingKey, json, CancellationToken.None);
 
             await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
         }
