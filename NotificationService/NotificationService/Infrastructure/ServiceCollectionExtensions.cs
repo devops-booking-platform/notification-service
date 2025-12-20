@@ -38,6 +38,10 @@ public static class ServiceCollectionExtensions
                 ReservationRespondedIntegrationEventHandlerHandler>();
 
         services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<HostRatedIntegrationEvent>>();
+        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<AccommodationRatedIntegrationEvent>>();
+        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<ReservationCreatedIntegrationEvent>>();
+        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<ReservationCanceledIntegrationEvent>>();
+        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<ReservationRespondedIntegrationEvent>>();
 
         services.AddHostedService<IntegrationEventsSubscriber>();
         services.AddAutoMapper(cfg => cfg.AddProfile<NotificationMappingProfile>());
