@@ -24,8 +24,16 @@ public class NotificationController(INotificationService notificationService) : 
         return Ok(result);
     }
 
+    [HttpGet]
+    [Route("unread")]
+    public async Task<IActionResult> GetUnread()
+    {
+        var result = await notificationService.GetUnreadNotifications();
+        return Ok(result);
+    }
+
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetRating(Guid id)
+    public async Task<IActionResult> Get(Guid id)
     {
         var result = await notificationService.GetNotification(id);
         return Ok(result);

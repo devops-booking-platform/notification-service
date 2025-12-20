@@ -34,6 +34,9 @@ public class NotificationService(
                 mapper.ConfigurationProvider);
     }
 
+    public async Task<PagedResult<GetNotificationResponse>> GetUnreadNotifications()
+    => await GetNotifications(new GetNotificationRequest {Read = false});
+
     public async Task<GetNotificationResponse> GetNotification(Guid id)
     {
         var userId = currentUserService.UserId;
