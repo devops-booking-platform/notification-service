@@ -2,8 +2,8 @@
 
 namespace NotificationService.IntegrationEvents.Handlers;
 
-public sealed class ReservationRespondedIntegrationEventHandlerHandler(
-    ILogger<ReservationRespondedIntegrationEventHandlerHandler> logger)
+public sealed class ReservationRespondedIntegrationEventHandler(
+    ILogger<ReservationRespondedIntegrationEventHandler> logger)
     : IIntegrationEventHandler<ReservationRespondedIntegrationEvent>
 {
     public async Task Handle(ReservationRespondedIntegrationEvent @event, CancellationToken ct)

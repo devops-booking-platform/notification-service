@@ -2,8 +2,8 @@
 
 namespace NotificationService.IntegrationEvents.Handlers;
 
-public sealed class AccommodationRatedIntegrationIntegrationEventHandler(
-    ILogger<AccommodationRatedIntegrationIntegrationEventHandler> logger)
+public sealed class AccommodationRatedIntegrationEventHandler(
+    ILogger<AccommodationRatedIntegrationEventHandler> logger)
     : IIntegrationEventHandler<AccommodationRatedIntegrationEvent>
 {
     public async Task Handle(AccommodationRatedIntegrationEvent @event, CancellationToken ct)

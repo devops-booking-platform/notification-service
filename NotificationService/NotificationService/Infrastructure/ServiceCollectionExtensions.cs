@@ -23,10 +23,10 @@ public static class ServiceCollectionExtensions
 
         services
             .AddScoped<IIntegrationEventHandler<HostRatedIntegrationEvent>,
-                HostRatedIntegrationIntegrationEventHandler>();
+                HostRatedIntegrationEventHandler>();
         services
             .AddScoped<IIntegrationEventHandler<AccommodationRatedIntegrationEvent>,
-                AccommodationRatedIntegrationIntegrationEventHandler>();
+                AccommodationRatedIntegrationEventHandler>();
         services
             .AddScoped<IIntegrationEventHandler<ReservationCreatedIntegrationEvent>,
                 ReservationCreatedIntegrationEventHandler>();
@@ -35,7 +35,7 @@ public static class ServiceCollectionExtensions
                 ReservationCanceledIntegrationEventHandler>();
         services
             .AddScoped<IIntegrationEventHandler<ReservationRespondedIntegrationEvent>,
-                ReservationRespondedIntegrationEventHandlerHandler>();
+                ReservationRespondedIntegrationEventHandler>();
 
         services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<HostRatedIntegrationEvent>>();
         services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<AccommodationRatedIntegrationEvent>>();
