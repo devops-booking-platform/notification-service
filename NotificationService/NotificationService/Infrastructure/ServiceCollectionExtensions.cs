@@ -20,7 +20,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<INotificationDisabledService, NotificationDisabledService>();
         services.AddScoped<INotificationService, Services.NotificationService>();
         services.AddScoped<IIntegrationEventDispatcher, IntegrationEventDispatcher>();
-
+        services.AddSignalR();
+        
         services
             .AddScoped<IIntegrationEventHandler<HostRatedIntegrationEvent>,
                 HostRatedIntegrationEventHandler>();

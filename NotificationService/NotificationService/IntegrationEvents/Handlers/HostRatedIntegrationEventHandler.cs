@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using NotificationService.Common.Events;
+using NotificationService.Common.Hubs;
 using NotificationService.Domain.Entities;
 using NotificationService.Repositories.Interfaces;
 
@@ -9,6 +11,7 @@ public sealed class HostRatedIntegrationEventHandler(
     ILogger<HostRatedIntegrationEventHandler> logger,
     IRepository<Notification> notificationRepository,
     IRepository<NotificationDisabled> notificationDisabledRepository,
+    IHubContext<NotificationHub> hubContext,
     IUnitOfWork unitOfWork)
     : IIntegrationEventHandler<HostRatedIntegrationEvent>
 {
@@ -32,6 +35,16 @@ public sealed class HostRatedIntegrationEventHandler(
 
         await unitOfWork.SaveChangesAsync(ct);
 
-        // TODO: Handle signalR
+        await hubContext
+            .Clients
+            .User(@event.HostId.ToString())
+            .SendAsync("ReceiveMessage",
+                new
+                {
+                    notification.Id,
+                    Type = NotificationType.HostRated,
+                    Message = message,
+                    notification.CreatedOn
+                }, ct);
     }
 }
