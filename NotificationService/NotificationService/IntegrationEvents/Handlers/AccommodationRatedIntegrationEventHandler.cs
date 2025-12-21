@@ -14,6 +14,14 @@ public sealed class AccommodationRatedIntegrationEventHandler(
 {
     public async Task Handle(AccommodationRatedIntegrationEvent @event, CancellationToken ct)
     {
+        var isNotificationDisabled = await notificationDisabledRepository
+            .Query()
+            .Where(x => x.UserId == @event.HostId && x.NotificationType == NotificationType.AccommodationRated)
+            .AnyAsync(ct);
+        if (isNotificationDisabled)
+        {
+            return;
+        }
         logger.LogInformation(
             "Handling AccommodationRatedIntegrationEvent for HostId={UserId} and AccommodationId={AccommodationId}",
             @event.HostId, @event.AccommodationId);
@@ -25,14 +33,6 @@ public sealed class AccommodationRatedIntegrationEventHandler(
         await notificationRepository.AddAsync(notification);
 
         await unitOfWork.SaveChangesAsync(ct);
-        var isNotificationDisabled = await notificationDisabledRepository
-            .Query()
-            .Where(x => x.UserId == @event.HostId && x.NotificationType == NotificationType.AccommodationRated)
-            .AnyAsync(ct);
-        if (isNotificationDisabled)
-        {
-            return;
-        }
 
         // TODO: Handle signalR
     }

@@ -14,14 +14,6 @@ public sealed class HostRatedIntegrationEventHandler(
 {
     public async Task Handle(HostRatedIntegrationEvent @event, CancellationToken ct)
     {
-        logger.LogInformation("Handling HostRatedIntegrationEvent for HostId={UserId}", @event.HostId);
-
-        var message = $"{@event.GuestUsername} left you a review with rating {@event.Rating}";
-        var notification = Notification.Create(@event.HostId, NotificationType.HostRated, message);
-
-        await notificationRepository.AddAsync(notification);
-
-        await unitOfWork.SaveChangesAsync(ct);
         var isNotificationDisabled = await notificationDisabledRepository
             .Query()
             .Where(x => x.UserId == @event.HostId && x.NotificationType == NotificationType.HostRated)
@@ -30,7 +22,16 @@ public sealed class HostRatedIntegrationEventHandler(
         {
             return;
         }
-        
+
+        logger.LogInformation("Handling HostRatedIntegrationEvent for HostId={UserId}", @event.HostId);
+
+        var message = $"{@event.GuestUsername} left you a review with rating {@event.Rating}";
+        var notification = Notification.Create(@event.HostId, NotificationType.HostRated, message);
+
+        await notificationRepository.AddAsync(notification);
+
+        await unitOfWork.SaveChangesAsync(ct);
+
         // TODO: Handle signalR
     }
 }
