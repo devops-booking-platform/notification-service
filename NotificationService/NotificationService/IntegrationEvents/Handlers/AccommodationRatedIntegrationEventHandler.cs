@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NotificationService.Common.Events;
 using NotificationService.Common.Hubs;
+using NotificationService.Domain.DTOs;
 using NotificationService.Domain.Entities;
 using NotificationService.Repositories.Interfaces;
 
@@ -42,12 +43,11 @@ public sealed class AccommodationRatedIntegrationEventHandler(
             .Clients
             .User(@event.HostId.ToString())
             .SendAsync("ReceiveMessage",
-                new
-                {
+                new NotificationDto
+                (
                     notification.Id,
-                    Type = NotificationType.AccommodationRated,
-                    Message = message,
-                    notification.CreatedOn
-                }, ct);
+                    NotificationType.AccommodationRated,
+                    message,
+                    notification.CreatedOn), ct);
     }
 }

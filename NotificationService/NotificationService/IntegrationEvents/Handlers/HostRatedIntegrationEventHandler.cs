@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NotificationService.Common.Events;
 using NotificationService.Common.Hubs;
+using NotificationService.Domain.DTOs;
 using NotificationService.Domain.Entities;
 using NotificationService.Repositories.Interfaces;
 
@@ -39,12 +40,11 @@ public sealed class HostRatedIntegrationEventHandler(
             .Clients
             .User(@event.HostId.ToString())
             .SendAsync("ReceiveMessage",
-                new
-                {
+                new NotificationDto
+                (
                     notification.Id,
-                    Type = NotificationType.HostRated,
-                    Message = message,
-                    notification.CreatedOn
-                }, ct);
+                    NotificationType.HostRated,
+                    message,
+                    notification.CreatedOn), ct);
     }
 }
