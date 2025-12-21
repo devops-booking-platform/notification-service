@@ -16,7 +16,6 @@ public sealed class IntegrationEventsSubscriber : BackgroundService
 
     private IConnection? _connection;
     private IChannel? _channel;
-    private CancellationToken _stoppingToken;
 
     public IntegrationEventsSubscriber(
     IOptions<RabbitMqSettings> options,
@@ -30,8 +29,6 @@ public sealed class IntegrationEventsSubscriber : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _stoppingToken = stoppingToken;
-
         var factory = new ConnectionFactory
         {
             HostName = _settings.Host,
@@ -59,7 +56,11 @@ public sealed class IntegrationEventsSubscriber : BackgroundService
 
         await _channel.BasicQosAsync(0, prefetchCount: 1, global: false, cancellationToken: stoppingToken);
 
-        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(UserDeletedIntegrationEvent), cancellationToken: stoppingToken);
+        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(HostRatedIntegrationEvent), cancellationToken: stoppingToken);
+        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(AccommodationRatedIntegrationEvent), cancellationToken: stoppingToken);
+        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(ReservationCreatedIntegrationEvent), cancellationToken: stoppingToken);
+        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(ReservationCanceledIntegrationEvent), cancellationToken: stoppingToken);
+        await _channel.QueueBindAsync(QueueName, _settings.Exchange, nameof(ReservationRespondedIntegrationEvent), cancellationToken: stoppingToken);
 
         var consumer = new AsyncEventingBasicConsumer(_channel);
         consumer.ReceivedAsync += OnMessage;
@@ -85,7 +86,7 @@ public sealed class IntegrationEventsSubscriber : BackgroundService
             using var scope = _serviceProvider.CreateScope();
             var dispatcher = scope.ServiceProvider.GetRequiredService<IIntegrationEventDispatcher>();
 
-            await dispatcher.Dispatch(ea.RoutingKey, json, _stoppingToken);
+            await dispatcher.Dispatch(ea.RoutingKey, json, CancellationToken.None);
 
             await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
         }

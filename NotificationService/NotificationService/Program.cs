@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NotificationService.Common.Hubs;
 using NotificationService.Configuration;
 using NotificationService.Data;
 using NotificationService.Infrastructure;
@@ -67,6 +68,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<NotificationHub>("/notificationHub");
 app.MapGet("/health", () => "OK");
 app.Run();
 

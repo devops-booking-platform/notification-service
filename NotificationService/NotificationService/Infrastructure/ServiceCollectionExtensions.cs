@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NotificationService.Common.Events;
 using NotificationService.Configuration;
+using NotificationService.Domain.Mappings;
 using NotificationService.IntegrationEvents.Handlers;
 using NotificationService.Repositories;
 using NotificationService.Repositories.Interfaces;
@@ -16,13 +17,35 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<INotificationDisabledService, NotificationDisabledService>();
+        services.AddScoped<INotificationService, Services.NotificationService>();
         services.AddScoped<IIntegrationEventDispatcher, IntegrationEventDispatcher>();
+        services.AddSignalR();
+        
+        services
+            .AddScoped<IIntegrationEventHandler<HostRatedIntegrationEvent>,
+                HostRatedIntegrationEventHandler>();
+        services
+            .AddScoped<IIntegrationEventHandler<AccommodationRatedIntegrationEvent>,
+                AccommodationRatedIntegrationEventHandler>();
+        services
+            .AddScoped<IIntegrationEventHandler<ReservationCreatedIntegrationEvent>,
+                ReservationCreatedIntegrationEventHandler>();
+        services
+            .AddScoped<IIntegrationEventHandler<ReservationCanceledIntegrationEvent>,
+                ReservationCanceledIntegrationEventHandler>();
+        services
+            .AddScoped<IIntegrationEventHandler<ReservationRespondedIntegrationEvent>,
+                ReservationRespondedIntegrationEventHandler>();
 
-        services.AddScoped<IIntegrationEventHandler<UserDeletedIntegrationEvent>, UserDeletedIntegrationEventHandler>();
-
-        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<UserDeletedIntegrationEvent>>();
+        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<HostRatedIntegrationEvent>>();
+        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<AccommodationRatedIntegrationEvent>>();
+        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<ReservationCreatedIntegrationEvent>>();
+        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<ReservationCanceledIntegrationEvent>>();
+        services.AddScoped<IRoutedIntegrationEventHandler, RoutedHandler<ReservationRespondedIntegrationEvent>>();
 
         services.AddHostedService<IntegrationEventsSubscriber>();
+        services.AddAutoMapper(cfg => cfg.AddProfile<NotificationMappingProfile>());
 
         return services;
     }
