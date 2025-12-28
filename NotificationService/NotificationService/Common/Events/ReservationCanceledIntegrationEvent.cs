@@ -3,7 +3,8 @@
 public record ReservationCanceledIntegrationEvent(
     Guid HostId,
     Guid ReservationId,
+    Guid AccommodationId,
     string AccommodationName,
-    DateTimeOffset StartDate,
-    DateTimeOffset EndDate,
+    DateOnly StartDate,
+    DateOnly EndDate,
     string GuestUsername) : IIntegrationEvent;
