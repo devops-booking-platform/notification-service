@@ -4,6 +4,6 @@ public record ReservationCreatedIntegrationEvent(
     Guid HostId,
     Guid ReservationId,
     string AccommodationName,
-    DateTimeOffset StartDate,
-    DateTimeOffset EndDate,
+    DateOnly StartDate,
+    DateOnly EndDate,
     string GuestUsername) : IIntegrationEvent;
