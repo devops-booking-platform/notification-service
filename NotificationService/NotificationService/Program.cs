@@ -5,6 +5,10 @@ using NotificationService.Common.Hubs;
 using NotificationService.Configuration;
 using NotificationService.Data;
 using NotificationService.Infrastructure;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Serilog;
 using System.Security.Claims;
 using System.Text;
@@ -14,6 +18,29 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .ReadFrom.Configuration(ctx.Configuration)
     .Enrich.FromLogContext()
 );
+var compositeTextMapPropagator = new CompositeTextMapPropagator(new TextMapPropagator[]
+{
+    new TraceContextPropagator(),
+    new BaggagePropagator()
+});
+Sdk.SetDefaultTextMapPropagator(compositeTextMapPropagator);
+var otlpEndpoint = builder.Configuration["OpenTelemetry:OtlpExporter:Endpoint"];
+
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing =>
+    {
+        tracing
+            .SetResourceBuilder(
+                ResourceBuilder.CreateDefault().AddService("NotificationService"))
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddRabbitMQInstrumentation()
+            .AddOtlpExporter(o =>
+            {
+                if (!string.IsNullOrWhiteSpace(otlpEndpoint))
+                    o.Endpoint = new Uri(otlpEndpoint);
+            });
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("Jwt"));
