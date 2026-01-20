@@ -28,9 +28,6 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
                         TestAuthHandler.AuthenticationScheme, options => { });
             });
         }).CreateClient();
-        
-        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
     }
 
     [Fact]
@@ -41,7 +38,8 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
         {
             NotificationType = NotificationType.ReservationCreated
         };
-
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Act
         var response = await _client.PostAsJsonAsync("/api/notification-disabled/disable", request);
 
@@ -70,7 +68,8 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
         var disabledNotification = NotificationDisabled.Create(_testUserId, NotificationType.ReservationCreated);
         await context.Set<NotificationDisabled>().AddAsync(disabledNotification);
         await context.SaveChangesAsync();
-        
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         var request = new EnableDisableNotificationRequest
         {
             Id = disabledNotification.Id,
@@ -97,6 +96,8 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
     public async Task EnableNotification_ShouldReturnNotFound_WhenDisabledNotificationDoesNotExist()
     {
         // Arrange
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         var request = new EnableDisableNotificationRequest
         {
             Id = Guid.NewGuid(),
@@ -128,6 +129,8 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
         await context.SaveChangesAsync();
 
         // Act
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         var response = await _client.GetAsync("/api/notification-disabled");
 
         // Assert
@@ -160,6 +163,8 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
         await context.SaveChangesAsync();
 
         // Act
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         var response = await _client.GetAsync("/api/notification-disabled");
 
         // Assert
@@ -175,6 +180,8 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
     public async Task GetDisabledNotifications_ShouldReturnEmptyList_WhenNoDisabledNotificationsExist()
     {
         // Act
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         var response = await _client.GetAsync("/api/notification-disabled");
 
         // Assert
@@ -189,6 +196,8 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
     public async Task DisableNotification_ShouldRequireAuthentication()
     {
         // Arrange
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         var unauthenticatedClient = _factory.CreateClient();
         var request = new EnableDisableNotificationRequest
         {
@@ -206,6 +215,8 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
     public async Task EnableNotification_ShouldRequireAuthentication()
     {
         // Arrange
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         var unauthenticatedClient = _factory.CreateClient();
         var request = new EnableDisableNotificationRequest
         {
@@ -223,6 +234,8 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
     public async Task GetDisabledNotifications_ShouldRequireAuthentication()
     {
         // Arrange
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         var unauthenticatedClient = _factory.CreateClient();
 
         // Act
@@ -243,7 +256,9 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
             NotificationType.HostRated,
             NotificationType.AccommodationRated
         };
-
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
+        
         // Act
         foreach (var notificationType in notificationTypes)
         {
@@ -279,7 +294,8 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
         
         await context.Set<NotificationDisabled>().AddRangeAsync(disabledNotifications);
         await context.SaveChangesAsync();
-
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Act
         foreach (var disabled in disabledNotifications)
         {

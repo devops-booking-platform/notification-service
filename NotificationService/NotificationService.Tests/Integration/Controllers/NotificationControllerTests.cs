@@ -27,9 +27,6 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
                         TestAuthHandler.AuthenticationScheme, options => { });
             });
         }).CreateClient();
-        
-        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
-        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
     }
 
     [Fact]
@@ -48,7 +45,8 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
         
         await context.Set<Notification>().AddRangeAsync(notifications);
         await context.SaveChangesAsync();
-
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Act
         var response = await _client.GetAsync("/api/notification?page=1&pageSize=10");
 
@@ -76,7 +74,8 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
         
         await context.Set<Notification>().AddRangeAsync(notification1, notification2);
         await context.SaveChangesAsync();
-
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Act
         var response = await _client.GetAsync("/api/notification?page=1&pageSize=10&read=false");
 
@@ -105,7 +104,8 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
         
         await context.Set<Notification>().AddRangeAsync(notifications);
         await context.SaveChangesAsync();
-
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Act
         var response = await _client.GetAsync($"/api/notification?page=1&pageSize=10&notificationType={NotificationType.ReservationCreated}");
 
@@ -135,7 +135,8 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
         
         await context.Set<Notification>().AddRangeAsync(notifications);
         await context.SaveChangesAsync();
-
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Act
         var response = await _client.GetAsync("/api/notification?page=1&pageSize=10");
 
@@ -151,6 +152,8 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
     [Fact]
     public async Task Search_ShouldReturnEmptyResult_WhenNoNotificationsExist()
     {
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Act
         var response = await _client.GetAsync("/api/notification?page=1&pageSize=10");
 
@@ -166,6 +169,8 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
     [Fact]
     public async Task Get_ShouldReturnNotification_WhenNotificationExists()
     {
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Arrange
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -191,6 +196,8 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
     [Fact]
     public async Task Get_ShouldReturnNotFound_WhenNotificationDoesNotExist()
     {
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Act
         var response = await _client.GetAsync($"/api/notification/{Guid.NewGuid()}");
 
@@ -201,6 +208,8 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
     [Fact]
     public async Task MarkAsRead_ShouldMarkNotificationAsRead_WhenNotificationExists()
     {
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Arrange
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -229,6 +238,8 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
     [Fact]
     public async Task MarkAsRead_ShouldReturnNotFound_WhenNotificationDoesNotExist()
     {
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Arrange
         var command = new MarkNotificationAsReadCommand { Id = Guid.NewGuid() };
 
@@ -242,6 +253,8 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
     [Fact]
     public async Task Search_ShouldHandlePagination_WhenMultiplePages()
     {
+        _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
+        _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
         // Arrange
         using var scope = _factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -279,6 +292,7 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
     [Fact]
     public async Task Search_ShouldRequireAuthentication()
     {
+        
         // Arrange
         var unauthenticatedClient = _factory.CreateClient();
 
