@@ -9,8 +9,6 @@ namespace NotificationService.Tests.Integration;
 
 public class NotificationServiceWebApplicationFactory : WebApplicationFactory<Program>
 {
-    private readonly string _databaseName = Guid.NewGuid().ToString();
-
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Test");
@@ -24,7 +22,7 @@ public class NotificationServiceWebApplicationFactory : WebApplicationFactory<Pr
             // Add in-memory database for testing with unique name per factory instance
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseInMemoryDatabase(_databaseName);
+                options.UseInMemoryDatabase("TestDatabase");
             });
 
             // Build the service provider
