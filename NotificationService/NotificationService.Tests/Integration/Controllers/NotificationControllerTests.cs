@@ -9,6 +9,7 @@ using NotificationService.Domain.Entities;
 
 namespace NotificationService.Tests.Integration.Controllers;
 
+[Collection("NotificationController Collection")]
 public class NotificationControllerTests : IClassFixture<NotificationServiceWebApplicationFactory>, IDisposable
 {
     private readonly NotificationServiceWebApplicationFactory _factory;

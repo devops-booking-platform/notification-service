@@ -8,6 +8,7 @@ using NotificationService.Domain.DTOs;
 
 namespace NotificationService.Tests.Integration.Controllers;
 
+[Collection("NotificationDisabledController Collection")]
 public class NotificationDisabledControllerTests : IClassFixture<NotificationServiceWebApplicationFactory>, IDisposable
 {
     private readonly NotificationServiceWebApplicationFactory _factory;
