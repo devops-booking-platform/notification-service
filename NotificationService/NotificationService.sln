@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService", "NotificationService\NotificationService.csproj", "{7A52FD48-5B76-451A-B9BC-C5B9C97A36F0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.Tests", "NotificationService.Tests\NotificationService.Tests.csproj", "{8B63FE59-6C87-462B-BA9D-D6BAD8B28E11}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CFF11657-286F-4239-A7FF-2CB5E1F15E21}"
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
@@ -17,5 +19,9 @@ Global
 		{7A52FD48-5B76-451A-B9BC-C5B9C97A36F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A52FD48-5B76-451A-B9BC-C5B9C97A36F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A52FD48-5B76-451A-B9BC-C5B9C97A36F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B63FE59-6C87-462B-BA9D-D6BAD8B28E11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B63FE59-6C87-462B-BA9D-D6BAD8B28E11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B63FE59-6C87-462B-BA9D-D6BAD8B28E11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B63FE59-6C87-462B-BA9D-D6BAD8B28E11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
