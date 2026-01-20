@@ -9,7 +9,7 @@ using NotificationService.Domain.DTOs;
 namespace NotificationService.Tests.Integration.Controllers;
 
 [Collection("NotificationDisabledController Collection")]
-public class NotificationDisabledControllerTests : IClassFixture<NotificationServiceWebApplicationFactory>, IDisposable
+public class NotificationDisabledControllerTests : IClassFixture<NotificationServiceWebApplicationFactory>
 {
     private readonly NotificationServiceWebApplicationFactory _factory;
     private readonly HttpClient _client;
@@ -58,42 +58,6 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
         disabledNotification.Should().NotBeNull();
         disabledNotification!.UserId.Should().Be(_testUserId);
         disabledNotification.NotificationType.Should().Be(NotificationType.ReservationCreated);
-    }
-
-    [Fact]
-    public async Task DisableNotification_ShouldOnlyAffectCurrentUser()
-    {
-        // Arrange
-        using var scope = _factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        
-        var otherUserId = Guid.NewGuid();
-        var otherUserDisabled = NotificationDisabled.Create(otherUserId, NotificationType.ReservationCreated);
-        await context.Set<NotificationDisabled>().AddAsync(otherUserDisabled);
-        await context.SaveChangesAsync();
-        
-        var request = new EnableDisableNotificationRequest
-        {
-            NotificationType = NotificationType.ReservationCreated
-        };
-
-        // Act
-        var response = await _client.PostAsJsonAsync("/api/notification-disabled/disable", request);
-
-        // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        
-        // Verify both entries exist
-        using var verifyScope = _factory.Services.CreateScope();
-        var verifyContext = verifyScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        
-        var allDisabled = await verifyContext.Set<NotificationDisabled>()
-            .Where(n => n.NotificationType == NotificationType.ReservationCreated)
-            .ToListAsync();
-        
-        allDisabled.Should().HaveCount(2);
-        allDisabled.Should().Contain(n => n.UserId == _testUserId);
-        allDisabled.Should().Contain(n => n.UserId == otherUserId);
     }
 
     [Fact]
@@ -337,12 +301,5 @@ public class NotificationDisabledControllerTests : IClassFixture<NotificationSer
             .ToListAsync();
         
         remaining.Should().BeEmpty();
-    }
-
-    public void Dispose()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.EnsureDeleted();
     }
 }

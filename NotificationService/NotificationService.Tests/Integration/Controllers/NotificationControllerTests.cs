@@ -10,7 +10,7 @@ using NotificationService.Domain.Entities;
 namespace NotificationService.Tests.Integration.Controllers;
 
 [Collection("NotificationController Collection")]
-public class NotificationControllerTests : IClassFixture<NotificationServiceWebApplicationFactory>, IDisposable
+public class NotificationControllerTests : IClassFixture<NotificationServiceWebApplicationFactory>
 {
     private readonly NotificationServiceWebApplicationFactory _factory;
     private readonly HttpClient _client;
@@ -289,12 +289,5 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-    }
-
-    public void Dispose()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.EnsureDeleted();
     }
 }
