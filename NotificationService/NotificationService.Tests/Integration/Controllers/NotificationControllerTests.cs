@@ -20,9 +20,6 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
     {
         _factory = factory;
         
-        // Clear database before each test
-        ClearDatabase();
-        
         _client = factory.WithWebHostBuilder(builder =>
         {
             builder.ConfigureServices(services =>
@@ -35,15 +32,6 @@ public class NotificationControllerTests : IClassFixture<NotificationServiceWebA
         
         _client.DefaultRequestHeaders.Add("X-Test-UserId", _testUserId.ToString());
         _client.DefaultRequestHeaders.Add("X-Test-Role", "User");
-    }
-
-    private void ClearDatabase()
-    {
-        using var scope = _factory.Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        context.Set<Notification>().RemoveRange(context.Set<Notification>());
-        context.Set<Domain.Entities.NotificationDisabled>().RemoveRange(context.Set<Domain.Entities.NotificationDisabled>());
-        context.SaveChanges();
     }
 
     [Fact]
