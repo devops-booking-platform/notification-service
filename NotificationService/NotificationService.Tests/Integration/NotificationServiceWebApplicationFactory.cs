@@ -24,17 +24,6 @@ public class NotificationServiceWebApplicationFactory : WebApplicationFactory<Pr
             {
                 options.UseInMemoryDatabase("TestDatabase");
             });
-
-            // Build the service provider
-            var sp = services.BuildServiceProvider();
-
-            // Create a scope to get the database context
-            using var scope = sp.CreateScope();
-            var scopedServices = scope.ServiceProvider;
-            var db = scopedServices.GetRequiredService<ApplicationDbContext>();
-
-            // Ensure the database is created
-            db.Database.EnsureCreated();
         });
     }
 }
