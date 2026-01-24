@@ -56,3 +56,28 @@ jobs:
 
       - name: Kaniko build & push (GHCR)
         shell: bash
+        run: |
+          DOCKERFILE="./NotificationService/NotificationService/Dockerfile"
+          CONTEXT="."
+
+          mkdir -p "${{ github.workspace }}/kaniko-docker"
+          cat > "${{ github.workspace }}/kaniko-docker/config.json" <<EOF
+          {
+            "auths": {
+              "ghcr.io": {
+                "username": "${{ github.actor }}",
+                "password": "${{ secrets.GITHUB_TOKEN }}"
+              }
+            }
+          }
+          EOF
+
+          docker run --rm \
+            -v "${{ github.workspace }}:/workspace" \
+            -v "${{ github.workspace }}/kaniko-docker:/kaniko/.docker" \
+            gcr.io/kaniko-project/executor:latest \
+            --context "/workspace/${CONTEXT}" \
+            --dockerfile "/workspace/${DOCKERFILE}" \
+            --destination "${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag_sha }}" \
+            --destination "${{ steps.vars.outputs.image }}:${{ steps.vars.outputs.tag_branch }}" \
+            --cache=true
