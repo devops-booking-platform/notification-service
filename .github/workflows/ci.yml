@@ -13,12 +13,10 @@ permissions:
 env:
   DOTNET_VERSION: "8.0.x"
   SOLUTION_PATH: "./NotificationService/NotificationService.sln"
-  IMAGE_NAME: "notification-service"
 
 jobs:
   build_test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -40,47 +38,21 @@ jobs:
   containerize_kaniko:
     needs: build_test
     runs-on: ubuntu-latest
-
-    container:
-      image: gcr.io/kaniko-project/executor:latest
+    if: github.event_name == 'push'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Prepare auth for GHCR
-        shell: bash
-        run: |
-          mkdir -p /kaniko/.docker
-          cat > /kaniko/.docker/config.json <<'EOF'
-          {
-            "auths": {
-              "ghcr.io": {
-                "username": "${{ github.actor }}",
-                "password": "${{ secrets.GITHUB_TOKEN }}"
-              }
-            }
-          }
-          EOF
-
-      - name: Build & Push image with Kaniko
+      - name: Set image name
+        id: vars
         shell: bash
         run: |
           OWNER_LC="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
           REPO_LC="$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')"
+          echo "image=ghcr.io/${OWNER_LC}/${REPO_LC}" >> $GITHUB_OUTPUT
+          echo "tag_sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+          echo "tag_branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
 
-          IMAGE="ghcr.io/${OWNER_LC}/${REPO_LC}"
-
-          CONTEXT="."
-          DOCKERFILE="./NotificationService/NotificationService/Dockerfile"
-
-          # Tagovi: commit SHA + grana (develop/main)
-          TAG_SHA="${{ github.sha }}"
-          TAG_BRANCH="${{ github.ref_name }}"
-
-          /kaniko/executor \
-            --context "${CONTEXT}" \
-            --dockerfile "${DOCKERFILE}" \
-            --destination "${IMAGE}:${TAG_SHA}" \
-            --destination "${IMAGE}:${TAG_BRANCH}" \
-            --cache=true
+      - name: Kaniko build & push (GHCR)
+        shell: bash
