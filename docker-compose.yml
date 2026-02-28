@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  notification-service:
+    build:
+      context: ./NotificationService/NotificationService
+      dockerfile: Dockerfile
+    container_name: notification-service
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+      - ConnectionStrings__DefaultConnection=Server=devops-sql,1433;Database=NotificationServiceDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True
+
+      - RabbitMq__Host=rabbitmq
+      - RabbitMq__User=guest
+      - RabbitMq__Pass=guest
+      - RabbitMq__VirtualHost=/
+      - RabbitMq__Exchange=integration
+    networks:
+      - shared-net
+    ports:
+      - "5006:8080"
+
+networks:
+  shared-net:
+    external: true
+    name: shared-net
