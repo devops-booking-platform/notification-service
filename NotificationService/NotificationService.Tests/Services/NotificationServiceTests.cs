@@ -1,6 +1,10 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using NotificationService.Common.Exceptions;
+using NotificationService.Data;
 using NotificationService.Domain.DTOs;
+using NotificationService.Domain.Mappings;
 
 namespace NotificationService.Tests.Services;
 
@@ -52,7 +56,20 @@ public class NotificationServiceTests
         _currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
         var request = new GetNotificationRequest { Read = true };
+        var expected = Notification.Create(userId, NotificationType.ReservationCreated, "Read by current user");
+        expected.MarkRead();
+        var unread = Notification.Create(userId, NotificationType.ReservationCreated, "Unread");
+        var anotherUser = Notification.Create(Guid.NewGuid(), NotificationType.ReservationCreated, "Other user");
+        anotherUser.MarkRead();
+        using var db = CreateQueryDatabase(expected, unread, anotherUser);
 
+        var result = await _sut.GetNotifications(request);
+
+        result.TotalCount.Should().Be(1);
+        var notification = result.Items.Should().ContainSingle().Subject;
+        notification.Id.Should().Be(expected.Id);
+        notification.Read.Should().BeTrue();
+        notification.Message.Should().Be(expected.Message);
     }
 
     [Fact]
@@ -63,6 +80,34 @@ public class NotificationServiceTests
         _currentUserServiceMock.Setup(x => x.UserId).Returns(userId);
 
         var request = new GetNotificationRequest { NotificationType = NotificationType.ReservationCreated };
+        var expected = Notification.Create(userId, NotificationType.ReservationCreated, "Requested type");
+        var differentType = Notification.Create(userId, NotificationType.ReservationCanceled, "Other type");
+        var anotherUser = Notification.Create(Guid.NewGuid(), NotificationType.ReservationCreated, "Other user");
+        using var db = CreateQueryDatabase(expected, differentType, anotherUser);
+
+        var result = await _sut.GetNotifications(request);
+
+        result.TotalCount.Should().Be(1);
+        var notification = result.Items.Should().ContainSingle().Subject;
+        notification.Id.Should().Be(expected.Id);
+        notification.NotificationType.Should().Be(NotificationType.ReservationCreated);
+        notification.Message.Should().Be(expected.Message);
+    }
+
+    // Use EF's async query provider and the application mapping for filtering/projection.
+    private ApplicationDbContext CreateQueryDatabase(params Notification[] notifications)
+    {
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseInMemoryDatabase($"notification_filters_{Guid.NewGuid():N}")
+            .Options;
+        var db = new ApplicationDbContext(options);
+        db.Set<Notification>().AddRange(notifications);
+        db.SaveChanges();
+        _notificationRepositoryMock.Setup(repository => repository.Query()).Returns(db.Set<Notification>());
+        var mapping = new MapperConfiguration(configuration => configuration.AddProfile<NotificationMappingProfile>(),
+            NullLoggerFactory.Instance);
+        _mapperMock.SetupGet(mapper => mapper.ConfigurationProvider).Returns(mapping);
+        return db;
     }
 
     #endregion
